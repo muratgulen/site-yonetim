@@ -21,3 +21,15 @@ Apartman ve site yöneticileri için not tutma ve takip uygulaması.
 - Kod sade ve okunabilir olsun
 - Her modül kendi klasöründe olsun
 - Türkçe içerik, İngilizce kod
+
+## Gelecek Versiyon Planı
+
+### Login Sistemi (Kademeli)
+- v2: Sadece yönetici login (Firebase Auth)
+- v3: Yönetici yardımcısı (kısıtlı yetki, RBAC)
+- v4: Tüm sakinler (sadece kendi bilgileri)
+
+### Migrasyon Notu
+Login versiyonuna geçerken AsyncStorage'daki mevcut veriyi
+Firebase'e taşıyan bir migrasyon akışı yazılmalı.
+İlk açılışta kullanıcıya sor, onay alınca taşı.

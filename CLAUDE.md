@@ -33,3 +33,13 @@ Apartman ve site yöneticileri için not tutma ve takip uygulaması.
 Login versiyonuna geçerken AsyncStorage'daki mevcut veriyi
 Firebase'e taşıyan bir migrasyon akışı yazılmalı.
 İlk açılışta kullanıcıya sor, onay alınca taşı.
+
+## Bilinen Teknik Borçlar
+
+### Daire Geçmiş Kaydı (Audit Trail)
+Şu an sakin değişikliği üzerine yazıyor, geçmiş kaydı tutulmuyor.
+İleride her daire için "tarih aralığı + kişi" bazlı geçmiş tutulmalı.
+Aidat dönemi (ayın kaçından kaçına) bilgisi de eklenmeli.
+Sakin değişikliğinde eski aylar etkilenmemeli.
+Bu değişiklik sakin modülü, aidat modülü ve storage katmanını etkiler — 
+mevcut veri yapısıyla uyumsuz, ayrı bir versiyon olarak planlanmalı.

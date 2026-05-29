@@ -11,29 +11,50 @@ import {
   ScrollView,
 } from 'react-native';
 
+const OCCUPANCY_OPTIONS = [
+  { label: 'Ev Sahibi', color: '#10b981' },
+  { label: 'Kiracı',    color: '#2563eb' },
+  { label: 'Boş',       color: '#6b7280' },
+];
+
 export default function ResidentForm({ visible, resident, onSave, onCancel }) {
   const [name, setName] = useState('');
   const [block, setBlock] = useState('');
   const [unit, setUnit] = useState('');
   const [phone, setPhone] = useState('');
+  const [occupancy, setOccupancy] = useState('Ev Sahibi');
+  const [plate, setPlate] = useState('');
 
   useEffect(() => {
     if (resident) {
-      setName(resident.name);
-      setBlock(resident.block);
-      setUnit(resident.unit);
-      setPhone(resident.phone);
+      setName(resident.name || '');
+      setBlock(resident.block || '');
+      setUnit(resident.unit || '');
+      setPhone(resident.phone || '');
+      setOccupancy(resident.occupancy || 'Ev Sahibi');
+      setPlate(resident.plate || '');
     } else {
       setName('');
       setBlock('');
       setUnit('');
       setPhone('');
+      setOccupancy('Ev Sahibi');
+      setPlate('');
     }
   }, [resident, visible]);
 
+  const canSave = name.trim() !== '' && unit.trim() !== '';
+
   function handleSave() {
-    if (!name.trim() || !unit.trim()) return;
-    onSave({ name: name.trim(), block: block.trim(), unit: unit.trim(), phone: phone.trim() });
+    if (!canSave) return;
+    onSave({
+      name: name.trim(),
+      block: block.trim(),
+      unit: unit.trim(),
+      phone: phone.trim(),
+      occupancy,
+      plate: plate.trim().toUpperCase(),
+    });
   }
 
   return (
@@ -80,6 +101,36 @@ export default function ResidentForm({ visible, resident, onSave, onCancel }) {
               placeholder="0555 000 00 00"
               keyboardType="phone-pad"
             />
+
+            <Text style={styles.label}>İkamet Eden *</Text>
+            <View style={styles.chipRow}>
+              {OCCUPANCY_OPTIONS.map(opt => {
+                const active = occupancy === opt.label;
+                return (
+                  <TouchableOpacity
+                    key={opt.label}
+                    style={[
+                      styles.chip,
+                      active && { backgroundColor: opt.color, borderColor: opt.color },
+                    ]}
+                    onPress={() => setOccupancy(opt.label)}
+                  >
+                    <Text style={[styles.chipText, active && styles.chipTextActive]}>
+                      {opt.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            <Text style={styles.label}>Araç Plakası</Text>
+            <TextInput
+              style={styles.input}
+              value={plate}
+              onChangeText={setPlate}
+              placeholder="34 ABC 123"
+              autoCapitalize="characters"
+            />
           </ScrollView>
 
           <View style={styles.buttons}>
@@ -87,9 +138,9 @@ export default function ResidentForm({ visible, resident, onSave, onCancel }) {
               <Text style={styles.cancelText}>İptal</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.saveBtn, (!name.trim() || !unit.trim()) && styles.disabled]}
+              style={[styles.saveBtn, !canSave && styles.disabled]}
               onPress={handleSave}
-              disabled={!name.trim() || !unit.trim()}
+              disabled={!canSave}
             >
               <Text style={styles.saveText}>Kaydet</Text>
             </TouchableOpacity>
@@ -134,6 +185,28 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: 15,
     backgroundColor: '#fafafa',
+  },
+  chipRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 4,
+  },
+  chip: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    backgroundColor: '#f9fafb',
+    alignItems: 'center',
+  },
+  chipText: {
+    fontSize: 13,
+    color: '#374151',
+    fontWeight: '600',
+  },
+  chipTextActive: {
+    color: '#fff',
   },
   buttons: {
     flexDirection: 'row',

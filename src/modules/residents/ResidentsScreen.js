@@ -8,6 +8,12 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
+
+const OCCUPANCY_STYLE = {
+  'Ev Sahibi': { color: '#10b981', bg: '#d1fae5' },
+  'Kiracı':    { color: '#2563eb', bg: '#dbeafe' },
+  'Boş':       { color: '#6b7280', bg: '#f3f4f6' },
+};
 import { useFocusEffect } from 'expo-router';
 import { getResidents, addResident, updateResident, deleteResident } from './residentsStorage';
 import ResidentForm from './ResidentForm';
@@ -68,14 +74,22 @@ export default function ResidentsScreen() {
   }
 
   function renderResident({ item }) {
+    const occ = item.occupancy || 'Ev Sahibi';
+    const occStyle = OCCUPANCY_STYLE[occ] || OCCUPANCY_STYLE['Ev Sahibi'];
     return (
       <View style={styles.card}>
         <View style={styles.cardInfo}>
-          <Text style={styles.cardName}>{item.name}</Text>
+          <View style={styles.cardNameRow}>
+            <Text style={styles.cardName}>{item.name}</Text>
+            <View style={[styles.occBadge, { backgroundColor: occStyle.bg }]}>
+              <Text style={[styles.occBadgeText, { color: occStyle.color }]}>{occ}</Text>
+            </View>
+          </View>
           <Text style={styles.cardSub}>
             {item.block ? `Blok ${item.block} / ` : ''}Daire {item.unit}
           </Text>
           {item.phone ? <Text style={styles.cardPhone}>{item.phone}</Text> : null}
+          {item.plate ? <Text style={styles.cardPlate}>🚗 {item.plate}</Text> : null}
         </View>
         <View style={styles.cardActions}>
           <TouchableOpacity style={styles.editBtn} onPress={() => handleEdit(item)}>
@@ -163,17 +177,37 @@ const styles = StyleSheet.create({
   cardInfo: {
     flex: 1,
   },
+  cardNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+    flexWrap: 'wrap',
+  },
   cardName: {
     fontSize: 16,
     fontWeight: '700',
     color: '#1f2937',
-    marginBottom: 4,
+  },
+  occBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
+  occBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
   },
   cardSub: {
     fontSize: 13,
     color: '#6b7280',
   },
   cardPhone: {
+    fontSize: 13,
+    color: '#6b7280',
+    marginTop: 2,
+  },
+  cardPlate: {
     fontSize: 13,
     color: '#6b7280',
     marginTop: 2,

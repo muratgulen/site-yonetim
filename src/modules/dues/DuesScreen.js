@@ -21,6 +21,14 @@ const MONTHS_TR = [
   'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık',
 ];
 
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const parts = dateStr.split('-');
+  if (parts.length !== 3) return dateStr;
+  const [y, m, d] = parts;
+  return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`;
+}
+
 function toMonthKey(year, month) {
   return `${year}-${String(month + 1).padStart(2, '0')}`;
 }
@@ -93,7 +101,7 @@ export default function DuesScreen() {
             {item.block ? `Blok ${item.block} / ` : ''}Daire {item.unit}
           </Text>
           {paid && paidDate ? (
-            <Text style={styles.paidDate}>Ödeme: {paidDate}</Text>
+            <Text style={styles.paidDate}>Ödeme: {formatDate(paidDate)}</Text>
           ) : null}
         </View>
         <View style={[styles.badge, paid ? styles.badgePaid : styles.badgeUnpaid]}>

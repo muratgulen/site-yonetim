@@ -21,7 +21,26 @@ const TAGS = [
 ];
 
 function today() {
-  return new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const d = String(now.getDate()).padStart(2, '0');
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  return `${d}/${m}/${now.getFullYear()}`;
+}
+
+function isoToDisplay(isoDate) {
+  if (!isoDate) return today();
+  const parts = isoDate.split('-');
+  if (parts.length !== 3) return isoDate;
+  const [y, m, d] = parts;
+  return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`;
+}
+
+function displayToIso(displayDate) {
+  if (!displayDate) return '';
+  const parts = displayDate.split('/');
+  if (parts.length !== 3) return displayDate;
+  const [d, m, y] = parts;
+  return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
 }
 
 export default function LogbookEntryForm({ visible, entry, onSave, onCancel }) {
@@ -34,7 +53,7 @@ export default function LogbookEntryForm({ visible, entry, onSave, onCancel }) {
     if (entry) {
       setTitle(entry.title || '');
       setContent(entry.content || '');
-      setDate(entry.date || today());
+      setDate(isoToDisplay(entry.date));
       setTag(entry.tag || 'Genel Not');
     } else {
       setTitle('');
@@ -51,7 +70,7 @@ export default function LogbookEntryForm({ visible, entry, onSave, onCancel }) {
     onSave({
       title: title.trim(),
       content: content.trim(),
-      date: date.trim(),
+      date: displayToIso(date.trim()),
       tag,
     });
   }
@@ -113,7 +132,7 @@ export default function LogbookEntryForm({ visible, entry, onSave, onCancel }) {
               style={styles.input}
               value={date}
               onChangeText={setDate}
-              placeholder="YYYY-AA-GG"
+              placeholder="GG/AA/YYYY"
             />
           </ScrollView>
 

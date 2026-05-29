@@ -21,18 +21,12 @@ const TAG_COLORS = {
   'Bakım': '#059669',
 };
 
-const MONTHS_TR = [
-  'Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz',
-  'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara',
-];
-
 function formatDate(dateStr) {
   if (!dateStr) return '';
   const parts = dateStr.split('-');
   if (parts.length !== 3) return dateStr;
   const [y, m, d] = parts;
-  const monthIdx = parseInt(m, 10) - 1;
-  return `${parseInt(d, 10)} ${MONTHS_TR[monthIdx] || m} ${y}`;
+  return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`;
 }
 
 const ALL_FILTER = 'Tümü';
@@ -51,6 +45,7 @@ export default function LogbookScreen() {
 
   async function loadEntries() {
     const data = await getEntries();
+    data.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
     setEntries(data);
   }
 

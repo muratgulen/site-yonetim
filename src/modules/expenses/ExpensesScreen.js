@@ -24,18 +24,12 @@ const CATEGORY_COLORS = {
   Diğer: '#6b7280',
 };
 
-const MONTHS_TR = [
-  'Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz',
-  'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara',
-];
-
 function formatDate(dateStr) {
   if (!dateStr) return '';
   const parts = dateStr.split('-');
   if (parts.length !== 3) return dateStr;
   const [y, m, d] = parts;
-  const monthIdx = parseInt(m, 10) - 1;
-  return `${parseInt(d, 10)} ${MONTHS_TR[monthIdx] || m} ${y}`;
+  return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`;
 }
 
 export default function ExpensesScreen() {
@@ -51,6 +45,7 @@ export default function ExpensesScreen() {
 
   async function loadExpenses() {
     const data = await getExpenses();
+    data.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
     setExpenses(data);
   }
 
